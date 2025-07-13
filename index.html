@@ -693,7 +693,7 @@
                 <button class="rsvp-button" onclick="showRSVPForm()">RSVP NOW</button>
                 
                 <div class="rsvp-form" id="rsvpForm">
-                    <h3 style="color: #2c3e50; margin-bottom: 20px; text-align: center;">Confirm Your Attendance</h3>
+                    <h3 style="color: #2c3e50; margin-bottom: 20px; text-align: center;" id="formTitle">Confirm Your Attendance</h3>
                     <form id="attendeeForm">
                         <div class="form-group">
                             <label for="name">Full Name *</label>
@@ -771,6 +771,8 @@
             document.getElementById('errorMessage').style.display = 'none';
             document.getElementById('successMessage').style.display = 'none';
             document.getElementById('attendeeForm').style.display = 'block';
+            // Reset the form title
+            document.getElementById('formTitle').textContent = 'Confirm Your Attendance';
         }
         
         document.getElementById('attendeeForm').addEventListener('submit', function(e) {
@@ -816,7 +818,8 @@
                 document.getElementById('loadingMessage').style.display = 'none';
                 
                 if (result.status === 'success') {
-                    // Show success message
+                    // Update the form title and show success message
+                    document.getElementById('formTitle').textContent = 'Registration Complete!';
                     document.getElementById('successMessage').style.display = 'block';
                 } else {
                     document.getElementById('errorMessage').innerHTML = result.message || 'Registration failed. Please try again.';
@@ -844,7 +847,8 @@
                     console.log('Fallback request completed');
                     document.getElementById('loadingMessage').style.display = 'none';
                     
-                    // Show success message
+                    // Update the form title and show success message
+                    document.getElementById('formTitle').textContent = 'Registration Complete!';
                     document.getElementById('successMessage').style.display = 'block';
                 }
             }).catch((finalError) => {
