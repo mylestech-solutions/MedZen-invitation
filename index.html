@@ -429,18 +429,93 @@
             font-weight: 500;
         }
         
-        .form-group input {
+        .form-group input,
+        .form-group select {
             width: 100%;
             padding: 12px;
             border: 2px solid #ddd;
             border-radius: 8px;
             font-size: 16px;
             transition: border-color 0.3s ease;
+            font-family: 'Poppins', sans-serif;
         }
         
-        .form-group input:focus {
+        .form-group input:focus,
+        .form-group select:focus {
             outline: none;
             border-color: #6db5b5;
+        }
+        
+        /* Time slot selection styles */
+        .time-slot-section {
+            background: #e8f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .time-slot-title {
+            color: #5a9b9b;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .time-slots-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .time-slot {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .time-slot:hover {
+            border-color: #6db5b5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .time-slot.selected {
+            background: linear-gradient(135deg, #6db5b5, #5a9b9b);
+            color: white;
+            border-color: #5a9b9b;
+        }
+        
+        .time-slot-time {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .time-slot-capacity {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .time-slot.selected .time-slot-capacity {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .time-slot.full {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .time-slot.full:hover {
+            transform: none;
+            box-shadow: none;
         }
         
         .submit-btn {
@@ -458,6 +533,12 @@
         
         .submit-btn:hover {
             transform: translateY(-1px);
+        }
+        
+        .submit-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
         }
         
         .cancel-btn {
@@ -593,6 +674,16 @@
             text-align: center;
         }
         
+        .time-info-note {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 13px;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
         @media (max-width: 480px) {
             .content {
                 padding: 25px;
@@ -625,6 +716,10 @@
             .detail-icon {
                 margin-right: 0;
                 margin-bottom: 10px;
+            }
+            
+            .time-slots-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -706,11 +801,35 @@
                             <label for="email">Email Address (Optional)</label>
                             <input type="email" id="email" name="email">
                         </div>
+                        
                         <div class="form-group">
                             <label for="guestBy">Guest of (Optional)</label>
                             <input type="text" id="guestBy" name="guestBy" placeholder="Enter name of your host">
                         </div>
-                        <button type="submit" class="submit-btn">Submit RSVP</button>
+                        
+                        <!-- New Time Slot Selection -->
+                        <div class="time-slot-section">
+                            <h4 class="time-slot-title">🕐 Select Your Preferred Arrival Time *</h4>
+                            <div class="time-slots-grid">
+                                <div class="time-slot" data-time="11:00 AM - 12:00 PM" onclick="selectTimeSlot(this)">
+                                    <div class="time-slot-time">11:00 AM - 12:00 PM</div>
+                                </div>
+                                <div class="time-slot" data-time="12:00 PM - 1:00 PM" onclick="selectTimeSlot(this)">
+                                    <div class="time-slot-time">12:00 PM - 1:00 PM</div>
+                                </div>
+                                <div class="time-slot" data-time="1:00 PM - 2:00 PM" onclick="selectTimeSlot(this)">
+                                    <div class="time-slot-time">1:00 PM - 2:00 PM</div>
+                                </div>
+                                <div class="time-slot" data-time="2:00 PM - 3:00 PM" onclick="selectTimeSlot(this)">
+                                    <div class="time-slot-time">2:00 PM - 3:00 PM</div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="selectedTimeSlot" name="timeSlot" required>
+                            <div class="time-info-note">
+                                💡 You're welcome to stay for the entire event!
+                            </div>
+                        </div>
+                        <button type="submit" class="submit-btn" id="submitBtn">Submit RSVP</button>
                         <button type="button" class="cancel-btn" onclick="hideRSVPForm()">Cancel</button>
                     </form>
                     <div class="loading-message" id="loadingMessage">
@@ -735,6 +854,10 @@
                             We can't wait to see you there! 🌟
                         </div>
                         
+                        <div id="timeSlotConfirmation" style="background: rgba(255,255,255,0.2); padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+                            <!-- Time slot confirmation will be displayed here -->
+                        </div>
+                        
                         <div style="margin-top: 15px; font-size: 14px;">
                             📧 A confirmation has been sent to your email
                         </div>
@@ -757,10 +880,34 @@
 
     <script>
         let currentAttendeeData = null;
+        let selectedTime = null;
+        
+        function selectTimeSlot(element) {
+            // Remove previous selection
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            
+            // Check if slot is full
+            if (element.classList.contains('full')) {
+                alert('This time slot is full. Please select another time.');
+                return;
+            }
+            
+            // Add selection to clicked element
+            element.classList.add('selected');
+            selectedTime = element.getAttribute('data-time');
+            document.getElementById('selectedTimeSlot').value = selectedTime;
+            
+            // Enable submit button
+            document.getElementById('submitBtn').disabled = false;
+        }
         
         function showRSVPForm() {
             document.getElementById('rsvpForm').style.display = 'block';
             document.querySelector('.rsvp-button').style.display = 'none';
+            // Disable submit button until time slot is selected
+            document.getElementById('submitBtn').disabled = true;
         }
         
         function hideRSVPForm() {
@@ -772,10 +919,22 @@
             document.getElementById('attendeeForm').style.display = 'block';
             // Reset the form title
             document.getElementById('formTitle').textContent = 'Confirm Your Attendance';
+            // Reset time slot selection
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            selectedTime = null;
+            document.getElementById('selectedTimeSlot').value = '';
         }
         
         document.getElementById('attendeeForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            // Validate time slot selection
+            if (!selectedTime) {
+                alert('Please select your preferred arrival time');
+                return;
+            }
             
             // Show loading message
             document.getElementById('attendeeForm').style.display = 'none';
@@ -789,6 +948,7 @@
                 phone: formData.get('phone'),
                 email: formData.get('email') || 'Not provided',
                 guestBy: formData.get('guestBy') || 'Not specified',
+                timeSlot: selectedTime,
                 timestamp: new Date().toLocaleString(),
                 event: 'MedZen Network & Fundraising Event - August 2nd, 2025'
             };
@@ -820,6 +980,9 @@
                     // Update the form title and show success message
                     document.getElementById('formTitle').textContent = 'Registration Complete!';
                     document.getElementById('successMessage').style.display = 'block';
+                    // Display time slot confirmation
+                    document.getElementById('timeSlotConfirmation').innerHTML = 
+                        '🕐 Your arrival time: <strong>' + selectedTime + '</strong>';
                 } else {
                     document.getElementById('errorMessage').innerHTML = result.message || 'Registration failed. Please try again.';
                     document.getElementById('errorMessage').style.display = 'block';
@@ -849,6 +1012,9 @@
                     // Update the form title and show success message
                     document.getElementById('formTitle').textContent = 'Registration Complete!';
                     document.getElementById('successMessage').style.display = 'block';
+                    // Display time slot confirmation
+                    document.getElementById('timeSlotConfirmation').innerHTML = 
+                        '🕐 Your arrival time: <strong>' + selectedTime + '</strong>';
                 }
             }).catch((finalError) => {
                 console.error('All requests failed:', finalError);
@@ -862,6 +1028,19 @@
                 }, 5000);
             });
         });
+        
+        // Simulate time slot capacity (this would normally come from your backend)
+        // You can update this based on actual registrations
+        function updateTimeSlotCapacity() {
+            // Example: Mark 12-1pm slot as full
+            // document.querySelectorAll('.time-slot')[1].classList.add('full');
+            // document.querySelectorAll('.time-slot')[1].querySelector('.time-slot-capacity').textContent = 'FULL';
+        }
+        
+        // Call this when page loads
+        window.onload = function() {
+            updateTimeSlotCapacity();
+        };
     </script>
 </body>
 </html>
