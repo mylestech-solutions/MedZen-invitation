@@ -266,14 +266,14 @@
         
         .event-details-container {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             margin-bottom: 30px;
             align-items: flex-start;
         }
         
         .event-details {
             background: #f8f9fa;
-            padding: 25px;
+            padding: 20px;
             border-radius: 15px;
             border-left: 5px solid #e67e22;
             flex: 1;
@@ -281,26 +281,29 @@
         
         .donate-section {
             background: #f8f9fa;
-            padding: 20px;
+            padding: 15px;
             border-radius: 15px;
             text-align: center;
-            min-width: 140px;
+            min-width: 150px;
+            flex-shrink: 0;
         }
         
         .donate-title {
             color: #5a9b9b;
             font-size: 16px;
             font-weight: 600;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             margin-top: 0;
         }
         
         .donate-qr-code {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
+            display: block;
+            margin: 0 auto;
         }
         
         .donate-qr-code:hover {
@@ -310,8 +313,8 @@
         .detail-item {
             display: flex;
             align-items: center;
-            margin-bottom: 15px;
-            font-size: 16px;
+            margin-bottom: 12px;
+            font-size: 15px;
         }
         
         .detail-item:last-child {
@@ -321,19 +324,21 @@
         .detail-icon {
             background: #e67e22;
             color: white;
-            width: 35px;
-            height: 35px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 15px;
+            margin-right: 12px;
             font-weight: bold;
+            flex-shrink: 0;
         }
         
         .detail-text {
             color: #2c3e50;
             font-weight: 500;
+            line-height: 1.4;
         }
         
         .rsvp-section {
@@ -704,8 +709,13 @@
             }
             
             .donate-section {
-                align-self: center;
+                width: 100%;
                 min-width: auto;
+            }
+            
+            .donate-qr-code {
+                width: 150px;
+                height: 150px;
             }
             
             .detail-item {
@@ -773,7 +783,7 @@
                     </div>
                     <div class="detail-item">
                         <div class="detail-icon">🌐</div>
-                        <div class="detail-text"><strong>https://www.mylestechsolutionsllc.com  Edit</strong></div>
+                        <div class="detail-text"><strong>https://www.mylestechsolutionsllc.com</strong></div>
                     </div>
                 </div>
                 
@@ -868,7 +878,7 @@
                     <p><strong>Contact Information:</strong><br>
                     📧 events@mylestechsolutionsllc.com<br>
                     📱 (240) 460-4692<br>
-                    🌐 https://www.mylestechsolutionsllc.com  Edit</p>
+                    🌐 https://www.mylestechsolutionsllc.com</p>
                     <p style="margin-top: 15px; font-style: italic;">
                         Presented by MylesTech Solutions<br>
                         Empowering Africa one digital solution at a time
